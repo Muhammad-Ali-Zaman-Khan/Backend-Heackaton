@@ -1,6 +1,20 @@
 import jwt from 'jsonwebtoken'
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import nodemailer from "nodemailer"
+
+
+// nodemailer
+const transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false,
+    auth: {
+      user: "jasper.weber@ethereal.email",
+      pass: "A7NeTsUtPRPEqQGy7x",
+    },
+  });
+  // nodemailer
 
 // GENERATE ACCESS AND REFRESH TOKEN
 const generateAccessToken = (userId) => {
@@ -56,6 +70,20 @@ const registerUser = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+try {
+    const info = await transporter.sendMail({
+      from: '"Jasper Weber" <jasper.weber@ethereal.email>',
+      to: `${email} , az030366@gmail.com`,
+      subject: "HEllO!!",
+      text: `Welcome to our platform,${userName}`,
+    });
+
+    console.log("Message sent: %s", info.messageId);
+    res.send("email sent");
+  } catch (error) {
+    console.log(error);
+  }
 
 
 // login user
