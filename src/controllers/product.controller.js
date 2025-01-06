@@ -3,7 +3,7 @@ import Products from "../models/product.model.js";
 import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs";
 
-// CLOUDINARY CONFIg
+// CLOUDINARY CONFIG
 
 cloudinary.config({ 
   cloud_name: 'dipbzyc4m', 
@@ -33,23 +33,39 @@ const uploadImageToCloudinary = async (localpath) => {
 //Add Product
 
 const addProduct = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, price, user } = req.body;
 
-  if (!title || !description) {
-    res.status(400).json({
-      message: "title or description required",
+  if (!title || !description || !price || !user) {
+    return res.status(400).json({
+      message: "Title, description, price, and user are required",
     });
-    return;
   }
 
-  const product = await Products.create({
-    title,
-    description,
-  });
+  if (!mongoose.Types.ObjectId.isValid(user)) {
+    return res.status(400).json({
+      message: "Invalid user ID format",
+    });
+  }
 
-  res.status(201).json({
-    message: "Product added successfully",
-  });
+  try {
+    const product = await Products.create({
+      title,
+      description,
+      price,
+      user, 
+    });
+
+    res.status(201).json({
+      message: "Product added successfully",
+      product,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while adding the product",
+      error: error.message,
+    });
+  }
 };
 
 

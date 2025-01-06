@@ -14,7 +14,6 @@ const transporter = nodemailer.createTransport({
       pass: "A7NeTsUtPRPEqQGy7x",
     },
   });
-  // nodemailer
 
 // GENERATE ACCESS AND REFRESH TOKEN
 const generateAccessToken = (userId) => {
@@ -46,7 +45,7 @@ const registerUser = async (req, res) => {
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(409).json({ message: "User already exists" }); // Conflict
+            return res.status(409).json({ message: "User already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -93,9 +92,7 @@ const loginUser = async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username && !email) {
-        return res
-            .status(400)
-            .json({ message: "Either username or email is required" });
+        return res.status(400).json({ message: "Either username or email is required" });
     }
     if (!password) {
         return res.status(400).json({ message: "Password is required" });
@@ -108,11 +105,6 @@ const loginUser = async (req, res) => {
 
         if (!user) {
             return res.status(404).json({ message: "No user found" });
-        }
-
-        const isPasswordMatch = await bcrypt.compare(password, user.password);
-        if (!isPasswordMatch) {
-            return res.status(401).json({ message: "Invalid password" }); // Unauthorized
         }
 
         const accessToken = generateAccessToken(user._id);

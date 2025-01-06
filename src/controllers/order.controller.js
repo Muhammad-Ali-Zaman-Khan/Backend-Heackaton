@@ -7,10 +7,19 @@ import Product from "../models/product.model.js";
 
 const createOrder = async (req, res) => {
     const { products } = req.body;
-    const userId = req.user._id; // Assuming `req.user` contains the authenticated user's details
+    const userId = req.user._id;
 
     if (!products || products.length === 0) {
         return res.status(400).json({ message: "Products are required to place an order" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    const invalidProductIds = products.filter(productId => !mongoose.Types.ObjectId.isValid(productId));
+    if (invalidProductIds.length > 0) {
+        return res.status(400).json({ message: "Invalid product IDs", invalidProductIds });
     }
 
     try {

@@ -5,7 +5,7 @@ import { upload } from "../middleware/multer.middleware.js";
 const router = express.Router();
 
 router.post("/", addProduct);
-router.get("/", getAllProducts);
+router.get("/getallproduct", getAllProducts);
 router.get("/:id", getSingleProduct);
 router.delete("/:id", deleteProduct);
 router.put("/:id", editProduct);
